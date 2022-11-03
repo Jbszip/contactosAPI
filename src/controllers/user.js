@@ -10,6 +10,7 @@ userController.signup = async (req, res, next)=>{
     const {username, email, password, checkPass, phoneNum} = req.body
     const newUser = new User({username, email, password, phoneNum})
     const resultado = await signUpValidations(username, email, password, checkPass, phoneNum)
+    console.log(resultado.msg)
     if(resultado.msg !== 'Test passed'){
         res.status(401).send(resultado.msg)
     } else{

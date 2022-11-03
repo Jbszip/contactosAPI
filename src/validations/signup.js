@@ -10,7 +10,7 @@ async function signUpValidations(username, email, password, checkPass, phoneNum)
   const ws = /\s/;
   //Usuario NO registrado
   const usuarioExiste = await User.find({ username: username })
-  usuarioExiste.length > 0 ? errors.push("Nombre de usuario ya registrado") : console.log("Username OK")
+  usuarioExiste[0] ? errors.push("Nombre de usuario ya registrado") : console.log("Username OK")
   //Usuario sin espacios en blanco
   ws.test(username) ? errors.push("Error: El usuario NO puede incluir espacios en blanco") : console.log("Username WS OK");
   //Usuario 4-25 caracteres

@@ -1,0 +1,215 @@
+openapi: 3.0.0
+#Parte General
+info:
+  title: ContactaME API
+  description: API REST basada en arquitectura de 3 Layer, que permite gestionar una agenda de contactos personalizada.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/v1
+tags:
+  - name: usuarios
+    description: Gestión de registro, inicio de sesión y verificación de sesión de los usuarios.
+  - name: contactos
+    description: Gestión de creación, consulta y eliminación de los contactos.
+
+#Rutas individuales
+paths:
+  /:
+    get:
+      summary: Página de inicio de la API.
+      responses:
+        200:
+          description: Renderiza el inicio.
+  
+  #Paths de usuario
+  /user/signup:
+    post:
+      tags:
+        - usuario
+      summary: Gestión de registro de usuarios.
+      requestBody:
+        description: Parámetros enviados a través de un formulario.
+        content: 
+          application/json:
+            schema:
+              $ref:'#/components/schemas/Registro'
+        required: true
+      responses:
+        200:
+          description: Devuelve String 'Registro exitoso'
+        401:
+          description: Devuelve un JSON con un mensaje de error.
+  
+  
+  /user/login:
+    post:
+      tags:
+        - usuario
+      summary: Página de inicio de la API.
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref:'#/components/schemas/InicioSesion'
+      responses:
+        200:
+          description: Devuelve un JSON con el token y el username.
+        401:
+          description: Devuelve un JSON con un mensaje de error.
+  
+  
+  /user/verify:
+    post:
+      tags:
+        - usuario
+      summary: Página de inicio de la API.
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref:'#/components/schemas/Token'
+      responses:
+        200:
+          description: Devuelve el nombre de usuario que está logeado.
+        401:
+          description: Devuelve un JSON con un mensaje de error.
+  
+  
+  
+  #Paths de contactos
+  /contactos/add:
+    post:
+      tags:
+        - contactos
+      summary: Página de inicio de la API.
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref:'#/components/schemas/CrearContacto'
+      responses:
+        200:
+          description: Devuelve un String 'Creación exitosa'.
+        401:
+          description: Devuelve un String con un mensaje de error.
+  
+  /contactos/miscontactos:
+    post:
+      tags:
+        - contactos
+      summary: Página de inicio de la API.
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref:'#/components/schemas/BuscarContacto'
+      responses:
+        200:
+          description: Devuelve un JSON con el la lista de los contactos.
+        401:
+          description: Devuelve un String con un mensaje de error.
+  
+  /contactos/deletecontact:
+    post:
+      tags:
+        - contactos
+      summary: Página de inicio de la API.
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref:'#/components/schemas/EliminarContacto'
+      responses:
+        200:
+          description: Devuelve un String con 'Delete exitoso'.
+        401:
+          description: Devuelve un String con un mensaje de error.
+  
+  
+  
+#Extracción de componentes
+components:
+  schemas:
+    #Esquemas de usuario
+    Registro:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Nombre de usuario. De 4 a 25 caracteres y sin espacios en blanco.
+        email: 
+          type: string
+          description: Email de registro requerido.
+        password: 
+          type: string
+          description: Contraseña del usuario, de 6 a 20 caracteres, sin espacios en blanco, con 1 mayúsucula, 1 minúscula y 1 número.
+        checkPass:
+          type: string
+          description: Contraseña repetida para comprobaciones.
+        phoneNum:
+          type: number
+          description: Número de telefono de registro. NO requerido. 
+  
+    InicioSesion:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Nombre de usuario.
+        password:
+          type: string
+          description: Contraseña del usuario.
+          
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token del usuario logueado.
+        
+    #Esquema de seguridad
+    securitySchema:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        headerFormat: JWT
+  
+    #Esquemas de contactos
+    CrearContacto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre del contacto a registrar. Requerido y único.
+        email:
+          type: string
+          description: Email de contacto. NO requerido.
+        phoneNum:
+          type: number
+          description: Número de teléfono del contacto. NO requerido.
+        description:
+          type: string
+          description: Breve descripción del contacto. Máximo 200 caracteres. NO requerido.
+        birthday:
+          type: string
+          description: Cumpleaños del contacto. NO requerido.
+        linkedin:
+          type: string
+          description: Link del LinkedIn del contacto. NO requerido.
+        username:
+          type: string
+          description: Nombre de usuario del dueño del contacto.
+  
+    BuscarContacto:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Nombre de usuario del dueño de los contactos.
+          
+    EliminarContacto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre del contacto a eliminar.
